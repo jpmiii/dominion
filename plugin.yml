@@ -1,0 +1,116 @@
+name: CivDominion
+version: 0.0.1a
+description: Alters basic mechanics and allows fortification of cities.
+author: psygate
+database: false
+main: com.psygate.civdominion.CivDominion
+#depend: [Database Abstraction Layer]
+commands:
+  forcecompletedominion:
+    description: Forces the completion of a dominion. Can circumvent the proximity restriction. Only dominion operators may use this command.
+    aliases: [fcd]
+    usage: /forcecompletedominion
+  dominiondrawboundaries:
+    description: Draws the boundaries of a dominion for you.
+    aliases: [ddb]
+    usage: /dominiondrawboundaries
+  dominionforceaddallupgrades:
+    description: Forcibly adds all upgrades to a dominion. Even disabled ones.
+    aliases: [dfau]
+    usage: /dominionforceaddallupgrades
+  forcedominiongrowth:
+    description: Force dominion growth by 5.
+    aliases: [dfg]
+    usage: /forcedominiongrowth
+  dominionclear:
+    description: Clears all dominion data.
+    aliases: [dc]
+    usage: /dominionclear
+  generatedominions:
+    description: Forces generation of X dominions.
+    aliases: [gd]
+    usage: /generatedominions <number>
+  generatepredominions:
+    description: Forces generation of X predominions.
+    aliases: [gp]
+    usage: /generatepredominions <number>
+  dominionsetgrowthinterval:
+    description: Sets the dominions growth interval.
+    aliases: [dsgi]
+    usage: /dominionsetgrowthinterval <interval in ms>
+  dominionforceglobalgrowth:
+    description: Forces dominion growth.
+    aliases: [dfgg]
+    usage: /dominionforceglobalgrowth
+  dominionstripupgrades:
+    description: Strips upgrades from a dominion.
+    aliases: [dsu]
+    usage: /dominionstripupgrades
+  dominiontoggledebug:
+    description: Toggles debug mode on or off.
+    aliases: [dtd]
+    usage: /dominiontoggledebug
+  dominionsetradius:
+    description: Sets a dominions size.
+    aliases: [dsr]
+    usage: /dominionsetradius <size>
+  dominionadduser:
+    description: Adds a new user to your dominion.
+    aliases: [dau]
+    usage: /dominionadduser <name> <rank>
+  dominionremoveuser:
+    description: Removes a user from your dominion.
+    aliases: [dru]
+    usage: /dominionremoveuser <name>
+  dominionmodifyuser:
+    description: Modifies the Rank of a user in a dominion.
+    aliases: [dmu]
+    usage: /dominionmodifyuser <name> <rank>
+  dominionaddcitadelgroup:
+    description: Adds all members from the specified Citadel group to your dominion.
+    aliases: [dacg]
+    usage: /dominionaddcitadelgroup <groupname>
+  dominionremoveupgrade:
+    description: Removes an upgrade from the dominion. Does not drop the upgrade costs again.
+    aliases: [drup]
+    usage: /dominionremoveupdage (<name>/<id>)
+  dominionlistupgrades:
+    description: Lists all upgrades a dominion has.
+    aliases: [dlu]
+    usage: /dominionlistupgrades
+  dominionaddupgrade:
+    description: Adds an upgrade to the dominion build queue.
+    aliases: [dua]
+    usage: /dominionaddupgrade (<name>/<id>)
+  dominionxpinfo:
+    description: Shows the stored XP in this dominion.
+    aliases: [dxi]
+    usage: /dominionxpinfo
+  dominionsetpath:
+    description: Sets the development path of the dominion. Warning, setting a path may drop upgrades already developed.
+    aliases: [dsp]
+    usage: /dominionsetpath <path>
+  dominionlistusers:
+    description: Lists all users in the dominion.
+    aliases: [dlm]
+    usage: /dominionlistusers
+  dominionshowname:
+    description: Shows the current name of the dominion.
+    aliases: [dsn]
+    usage: /dominionshowname
+  dominionsetname:
+    description: Sets the name of your dominion.
+    aliases: [dns]
+    usage: /dominionsetname <name>
+  displace:
+    description: Displaces you via wormhole to another dominion.
+    aliases: [dis]
+    usage: /displace <targetname>
+  link:
+    description: Links one dominion to another.
+    aliases: [li]
+    usage: /link <targetname>
+  unlink:
+    description: Unlinks one dominion from another.
+    aliases: [uli]
+    usage: /unlink <targetname>

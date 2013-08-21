@@ -1,0 +1,122 @@
+#Upgrade buildtime is in seconds.
+upgrades:
+  - name: NoInvisibility
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: Fortification
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: NoPearl
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: MobCull
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: NoCitadel
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: NoHostileMobs
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: NoLava
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: WheatLeech
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: FootInTheGrave
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: ParasiticBond
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: DeathIntoLife
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: PotentCorruption
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: FullOfLife
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: DeathlyPerception
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: PathOfMidnight
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1 
+  - name: WitheringStrikes
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: PrayerOfIdols
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: PrayerOfAsh
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: PrayerOfFertility
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: UnearthlyShackles
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+  - name: TesseractDisplacement
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
+    
+dominion:
+  material: NOTE_BLOCK
+  initial_radius: 10
+  max_radius: 200
+  votes: 5
+  approval_material: DIAMOND
+  approval_amount: 1
+  exclusion_zone_size: 10
+  growthperuser: 1
+  growthinterval: 10000
+  
+operators:
+  - psygate
+  - nyangate
