@@ -58,7 +58,7 @@ Dominion stores its data upon reload / shutdown of the server. The data is writt
 
  Sets the radius of a dominion. This will override the old radius, regardless of what it was. It is not braced against negative values, or zero for that matter. so be careful.
 
-**User Commands**:
+## User Commands:
 
  * /dominiondrawboundaries
 
@@ -154,10 +154,12 @@ Dominion stores its data upon reload / shutdown of the server. The data is writt
 
  alias: uli
 
-**Upgrades**:
+---
+
+## Upgrades:
 Upgrades have currently 3 categories. Basic (can be developed anyways), Economy (your dominion has to be in the economy path) and War (your dominion has to be set to the war path).
 
-**BASIC**
+### BASIC
 
 * NoInvisibility:
  
@@ -183,7 +185,7 @@ Upgrades have currently 3 categories. Basic (can be developed anyways), Economy 
 
  If wheat grows within your dominion, there is a 1% chance the growth is cancelled, and your dominion gains 1 XP. You can retrieve the xp by hitting the dominion block with a glas bottle in hand.
 
-**WAR**
+### WAR
 
 * FootInTheGrave:
 
@@ -217,7 +219,7 @@ Upgrades have currently 3 categories. Basic (can be developed anyways), Economy 
 
  1% chance on hit, that your enemy will only do 0.8 damage for 3 seconds. ICD: 10 minutes.
 
-**ECONOMY**
+### ECONOMY
 
 * PrayerOfIdols:
  
