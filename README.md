@@ -8,7 +8,8 @@ Dominions now have to chose a path (war or economy) to reach certain upgrades. T
 Dominions below a size of 15 do not have an inner exclusion zone at all.
 
 Dominion stores its data upon reload / shutdown of the server. The data is written newly from memory everytime you reload. Watch the xmlpersistence folder for size, and delete some of the inner folders, if you have to. Be careful not to delete the newest one.
------------------------------------------
+
+---
 # Commands
 
 ## Operator commands: (ops are set in the config of dominion)
