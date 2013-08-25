@@ -114,3 +114,11 @@ commands:
     description: Unlinks one dominion from another.
     aliases: [uli]
     usage: /unlink <targetname>
+  beacon:
+    description: Allows users to activate the Beacon of Mercy upgrade.
+    aliases: [bom]
+    usage: /beacon <name>
+  dominionshowinfluence:
+    description: Shows a dominions current influence value.
+    aliases: [dsi]
+    usage: /dominionshowinfluence

@@ -1,4 +1,6 @@
-package com.psygate.civdominion.commands.upgrades.tesseractdisplacement;
+package com.psygate.civdominion.commands.information;
+
+import java.util.Map.Entry;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,34 +13,31 @@ import com.psygate.civdominion.configuration.Strings;
 import com.psygate.civdominion.types.Dominion;
 import com.psygate.civdominion.types.uac.Rank;
 
-public class LinkCommand extends ACommand {
-	public LinkCommand() {
-		super("link");
+public class DominionInformationCommand extends ACommand {
+	public DominionInformationCommand() {
+		super("dominionshowinfluence");
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 			throws CommandException {
 		Player caller = checkExceptionPlayer(sender);
+
 		Dominion dom = CivDominion.getInstance().getMap().getDominion(caller.getTargetBlock(null, 10));
-		if (dom == null) {
-			sender.sendMessage(Strings.notPointingAtDominion);
-		} else if (!dom.hasMember(caller.getName()) || dom.getMemberRank(caller.getName()).getID() < Rank.Admin.getID()) {
-			sender.sendMessage(Strings.insufficientPermissions);
-		}  else if(args.length != 1) {
-			caller.sendMessage(Strings.invalidArguments);
-		} else if(!CivDominion.getInstance().getMap().hasName(args[0])) {
-			sender.sendMessage(Strings.invalidname);
+		if (dom != null) {
+			double influence = 2 * Math.PI * dom.getRadius() * dom.getMemberMap().size();
+			for (Entry<String, Rank> ent : dom.getMemberMap().entrySet()) {
+				influence += ent.getValue().getID() + 1;
+			}
+			sender.sendMessage(Strings.influence.replace("$i$", Double.toString(influence)));
 		} else {
-			dom.addLink(args[0]);
-			sender.sendMessage(Strings.linked);
+			sender.sendMessage(Strings.notPointingAtDominion);
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean requiresOP() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

@@ -1,8 +1,10 @@
 package com.psygate.civdominion.listeners;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
@@ -15,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.psygate.civdominion.CivDominion;
@@ -27,6 +30,7 @@ import com.psygate.civdominion.types.Coordinates;
 import com.psygate.civdominion.types.Dominion;
 import com.psygate.civdominion.types.MapStructure;
 import com.psygate.civdominion.types.PreDominion;
+import com.psygate.civdominion.types.Vector3;
 import com.psygate.civdominion.types.uac.Rank;
 import com.psygate.minecraft.PlayerInventoryHelper;
 import com.untamedears.citadel.Citadel;
@@ -37,7 +41,7 @@ public class DominionListener implements Listener {
 	private Dominion dom;
 	private Configuration conf;
 	private MapStructure map;
-
+	
 	public DominionListener(Configuration conf, MapStructure map) {
 		this.conf = conf;
 		pred = conf.getProtoPreDominion();
@@ -199,6 +203,5 @@ public class DominionListener implements Listener {
 			}
 		}
 		CivDominion.getInstance().getPlayerMap().clear();
-
 	}
 }

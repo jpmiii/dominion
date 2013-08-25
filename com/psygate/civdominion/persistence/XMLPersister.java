@@ -24,12 +24,13 @@ import com.psygate.civdominion.upgrades.UpgradeTimer;
 import com.thoughtworks.xstream.XStream;
 
 public class XMLPersister {
-	private Pattern pat = Pattern.compile("[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}");
+	private final static Pattern pat = Pattern
+			.compile("[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2}");
 	private final static String prefix = "xmlpersistence";
 	private final static String playermap = "playermap.xml";
 	private final static String upgrademap = "updatemap.xml";
 
-	public void load() {
+	public static synchronized void load() {
 		File f = new File(CivDominion.getInstance().getDataFolder(), prefix);
 		if (f.isFile())
 			f.delete();
@@ -83,7 +84,7 @@ public class XMLPersister {
 				if (obj instanceof Dominion) {
 					Dominion dominion = (Dominion) obj;
 					CivDominion.getInstance().getMap().addDominion(dominion);
-					for(String name : dominion.getMemberMap().keySet()) {
+					for (String name : dominion.getMemberMap().keySet()) {
 						CivDominion.getInstance().getMap().addPlayerDominion(name, dominion);
 					}
 					// Logger.getLogger("CivDominion-XMLPersister").info("Dominion loaded: "
@@ -102,7 +103,7 @@ public class XMLPersister {
 					}
 				}
 			} catch (Exception e) {
-				Logger.getLogger("CivDominion-XMLPersister").log(Level.SEVERE, "Unable to load " + dom, e);
+				Logger.getLogger("CivDominion-XMLPersister").log(Level.SEVERE, "Unable to load dominion " + dom, e);
 			} finally {
 				try {
 					obji.close();
@@ -119,9 +120,7 @@ public class XMLPersister {
 				in = stream.createObjectInputStream(new FileInputStream(playf));
 				Object obj = in.readObject();
 				if (obj instanceof PlayerMap) {
-
 					Logger.getLogger("CivDominion-XMLPersister").info("Playermap loaded. (" + playf + ")");
-
 					CivDominion.getInstance().setPlayerMap((PlayerMap) obj);
 				}
 			} catch (Exception e) {
@@ -136,7 +135,7 @@ public class XMLPersister {
 		} else {
 			Logger.getLogger("CivDominion-XMLPersister").info("Couldn't locate player map. (" + playf + ")");
 		}
-		
+
 		File upf = new File(recent, upgrademap);
 		if (upf.exists() && upf.isFile()) {
 			ObjectInputStream in = null;
@@ -147,7 +146,7 @@ public class XMLPersister {
 
 					Logger.getLogger("CivDominion-XMLPersister").info("Upgrademap loaded. (" + upf + ")");
 
-					CivDominion.getInstance().setUpgradeTimer((UpgradeTimer)obj);
+					CivDominion.getInstance().setUpgradeTimer((UpgradeTimer) obj);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -161,12 +160,12 @@ public class XMLPersister {
 		} else {
 			Logger.getLogger("CivDominion-XMLPersister").info("Couldn't locate updatemap map. (" + upf + ")");
 		}
-		
+
 		Logger.getLogger("CivDominion-XMLPersister").info(
 				"Loaded " + doms + " Dominions and " + predoms + " PreDominions.");
 	}
 
-	public void save() {
+	public static synchronized void save() {
 		MapStructure struc = CivDominion.getInstance().getMap();
 		String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		File storage = new File(new File(CivDominion.getInstance().getDataFolder(), prefix), format);
@@ -234,7 +233,7 @@ public class XMLPersister {
 		ObjectOutputStream in = null;
 		try {
 			in = stream.createObjectOutputStream(new FileOutputStream(playf));
-			in.writeObject(CivDominion.getInstance().getPlayerMap());
+			in.writeObject(CivDominion.getInstance().getPlayerMap().clone());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -244,13 +243,13 @@ public class XMLPersister {
 
 			}
 		}
-		
+
 		File upf = new File(storage, upgrademap);
 
 		ObjectOutputStream uin = null;
 		try {
 			uin = stream.createObjectOutputStream(new FileOutputStream(upf));
-			uin.writeObject(CivDominion.getInstance().getUpgradeTimer());
+			uin.writeObject(CivDominion.getInstance().getUpgradeTimer().clone());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -260,7 +259,5 @@ public class XMLPersister {
 
 			}
 		}
-
 	}
-
 }

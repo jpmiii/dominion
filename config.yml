@@ -105,6 +105,11 @@ upgrades:
     enabled: true
     paymat: DIAMOND
     payamount: 1
+  - name: BeaconOfMercy
+    buildtime: 10
+    enabled: true
+    paymat: DIAMOND
+    payamount: 1
     
 dominion:
   material: NOTE_BLOCK

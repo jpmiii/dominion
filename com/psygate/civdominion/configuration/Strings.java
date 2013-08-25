@@ -83,6 +83,11 @@ public class Strings {
 	public static final String impossibledisplace = encode("Space time geometry is hard. And you don't seem to understand it.", RED);
 	public static final String spacewarp = encode("A gravity well is blocking space from bending that way.", RED);
 	public static final String tesseracted = encode("A bright light, and for a short moment earth shrunk in a weird way.", GREEN);
+	public static final String mercyfail = encode("This place seems to not know mercy.", RED);
+	public static final String linked = encode("Space folded in the right way. Four dimensional path created.", GREEN);
+	public static final String beacon = encode("A bright light shows the path. The universe seems mercyful to you.", GREEN);
+	public static final String nomoremercy = encode("There is no mercy left in this harsh universe.", RED);
+	public static final String influence = encode("Your dominions current influence is $i$.", GREEN);
 	
 	private static String encode(String s, ChatColor col) {
 		StringBuilder builder = new StringBuilder();

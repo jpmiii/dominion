@@ -26,6 +26,7 @@ public class Dominion {
 	private Set<String> links = new HashSet<String>();
 	private transient Object upgradelock = new Object();
 	private transient Object linklock = new Object();
+	private transient Object memberlock = new Object();
 
 	public Dominion(Coordinates coords, float radius, Map<String, Rank> members, int maxsize, int exclusionZone,
 			float gwpu) {
@@ -52,7 +53,9 @@ public class Dominion {
 	// }
 
 	public void setMembers(Map<String, Rank> members) {
-		this.members = members;
+		synchronized (memberlock) {
+			this.members = members;
+		}
 	}
 
 	public int getMaxsize() {
@@ -124,27 +127,39 @@ public class Dominion {
 	}
 
 	public boolean hasUpgrade(Upgrade up) {
-		return upgrades.contains(up) && up.isEnabled();
+		synchronized (upgradelock) {
+			return upgrades.contains(up) && up.isEnabled();
+		}
 	}
 
 	public Rank getMemberRank(String name) {
-		return members.get(name);
+		synchronized (memberlock) {
+			return members.get(name);
+		}
 	}
 
 	public boolean hasMember(String string) {
-		return members.containsKey(string);
+		synchronized (memberlock) {
+			return members.containsKey(string);
+		}
 	}
 
 	public void addMember(String string, Rank nr) {
-		members.put(string, nr);
+		synchronized (memberlock) {
+			members.put(string, nr);
+		}
 	}
 
 	public Map<String, Rank> getMemberMap() {
-		return members;
+		synchronized (memberlock) {
+			return new HashMap<String, Rank>(members);
+		}
 	}
 
 	public void removeMember(String string) {
-		members.remove(string);
+		synchronized (memberlock) {
+			members.remove(string);
+		}
 	}
 
 	public void removeUpgrade(Upgrade up) {
@@ -181,7 +196,9 @@ public class Dominion {
 	}
 
 	public void setMemberRank(String memberName, Rank moderator) {
-		members.put(memberName, moderator);
+		synchronized (memberlock) {
+			members.put(memberName, moderator);
+		}
 	}
 
 	public UpgradeType getPath() {
@@ -221,6 +238,8 @@ public class Dominion {
 	private Object readResolve() throws ObjectStreamException {
 		upgradelock = new Object();
 		linklock = new Object();
+		memberlock = new Object();
+
 		return this;
 	}
 }

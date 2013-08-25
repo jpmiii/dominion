@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.apache.commons.pool.impl.GenericKeyedObjectPool.Config;
@@ -15,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.psygate.civdominion.commands.ACommand;
 import com.psygate.civdominion.commands.error.CommandException;
 import com.psygate.civdominion.commands.error.NotAPlayerException;
+import com.psygate.civdominion.commands.information.DominionInformationCommand;
 import com.psygate.civdominion.commands.information.DominionSetNameCommand;
 import com.psygate.civdominion.commands.information.DominionShowNameCommand;
 import com.psygate.civdominion.commands.information.DrawBoundariesCommand;
@@ -38,6 +40,7 @@ import com.psygate.civdominion.commands.upgrades.AddUpgradeCommand;
 import com.psygate.civdominion.commands.upgrades.DominionSetPathCommand;
 import com.psygate.civdominion.commands.upgrades.ListUpgradesCommand;
 import com.psygate.civdominion.commands.upgrades.RemoveUpgradeCommand;
+import com.psygate.civdominion.commands.upgrades.beaconofmercy.BeaconCommand;
 import com.psygate.civdominion.commands.upgrades.tesseractdisplacement.DisplaceCommand;
 import com.psygate.civdominion.commands.upgrades.tesseractdisplacement.LinkCommand;
 import com.psygate.civdominion.commands.upgrades.tesseractdisplacement.UnlinkCommand;
@@ -47,6 +50,7 @@ import com.psygate.civdominion.configuration.Parser;
 import com.psygate.civdominion.configuration.Strings;
 import com.psygate.civdominion.listeners.ChatListener;
 import com.psygate.civdominion.listeners.DominionListener;
+import com.psygate.civdominion.listeners.UpgradeListener;
 import com.psygate.civdominion.listeners.NoCitadelListener;
 import com.psygate.civdominion.listeners.UpgradeListener;
 import com.psygate.civdominion.persistence.XMLPersister;
@@ -54,6 +58,7 @@ import com.psygate.civdominion.types.Coordinates;
 import com.psygate.civdominion.types.GrowthManager;
 import com.psygate.civdominion.types.MapStructure;
 import com.psygate.civdominion.types.PlayerMap;
+import com.psygate.civdominion.upgrades.Upgrade;
 import com.psygate.civdominion.upgrades.UpgradeTimer;
 import com.psygate.civdominion.upgrades.Vector;
 
@@ -70,6 +75,7 @@ public class CivDominion extends JavaPlugin {
 	private HashMap<Coordinates, Long> xp = new HashMap<Coordinates, Long>();
 	public static boolean DEBUG = false;
 	public static boolean CITADEL = false;
+	private static UpgradeListener uplistener;
 
 	public CivDominion() {
 		dom = this;
@@ -84,12 +90,12 @@ public class CivDominion extends JavaPlugin {
 		conf = Parser.parse();
 		struc = new MapStructure();
 
-		XMLPersister xmlp = new XMLPersister();
-		xmlp.load();
+		final XMLPersister xmlp = new XMLPersister();
+		XMLPersister.load();
 
 		DominionListener doml = new DominionListener(conf, struc);
 		ChatListener cl = new ChatListener();
-		UpgradeListener ul = new UpgradeListener();
+		uplistener = new UpgradeListener();
 		if (super.getServer().getPluginManager().getPlugin("Citadel") != null) {
 			CITADEL = true;
 			NoCitadelListener list = new NoCitadelListener();
@@ -97,13 +103,25 @@ public class CivDominion extends JavaPlugin {
 		}
 		super.getServer().getPluginManager().registerEvents(doml, this);
 		super.getServer().getPluginManager().registerEvents(cl, this);
-		super.getServer().getPluginManager().registerEvents(ul, this);
+		super.getServer().getPluginManager().registerEvents(uplistener, this);
 		super.getServer().getScheduler().scheduleSyncDelayedTask(this, mgr, 1000);
 		log.info("Registering commands.");
 		registerCommands();
 		log.info("Bootstrapping Completed.");
 		mgr.grow(false);
 		super.getServer().getPluginManager().registerEvents(map.getListener(), this);
+
+		super.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			private long last = System.currentTimeMillis();
+
+			@Override
+			public void run() {
+				if (System.currentTimeMillis() - last > TimeUnit.MINUTES.toSeconds(30)) {
+					XMLPersister.save();
+					last = System.currentTimeMillis();
+				}
+			}
+		}, 20 * TimeUnit.MINUTES.toSeconds(60));
 	}
 
 	private void registerCommands() {
@@ -126,14 +144,22 @@ public class CivDominion extends JavaPlugin {
 		addCommand(new ToggleDebugCommand());
 		addCommand(new AddCitadelGroupCommand());
 		addCommand(new DominionSetRadiusCommand());
-		addCommand(new XPInfoCommand());
 		addCommand(new DominionSetPathCommand());
 		addCommand(new ListUserCommand());
 		addCommand(new DominionShowNameCommand());
 		addCommand(new DominionSetNameCommand());
-		addCommand(new DisplaceCommand());
-		addCommand(new LinkCommand());
-		addCommand(new UnlinkCommand());
+		addCommand(new DominionInformationCommand());
+		if (Upgrade.TesseractDisplacement.isEnabled()) {
+			addCommand(new DisplaceCommand());
+			addCommand(new LinkCommand());
+			addCommand(new UnlinkCommand());
+		}
+		if (Upgrade.WheatLeech.isEnabled()) {
+			addCommand(new XPInfoCommand());
+		}
+		if (Upgrade.BeaconOfMercy.isEnabled()) {
+			addCommand(new BeaconCommand());
+		}
 	}
 
 	private void addCommand(ACommand com) {
@@ -143,7 +169,7 @@ public class CivDominion extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		XMLPersister xmlp = new XMLPersister();
-		xmlp.save();
+		XMLPersister.save();
 		super.onDisable();
 	}
 
@@ -252,5 +278,9 @@ public class CivDominion extends JavaPlugin {
 
 	public void cancelTask(int finishjob) {
 		getServer().getScheduler().cancelTask(finishjob);
+	}
+
+	public static UpgradeListener getUpgradeListener() {
+		return uplistener;
 	}
 }

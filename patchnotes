@@ -1,0 +1,14 @@
+Dominion 0.0.2a:
+
+* Fixed a bug where you could displace without having any upgrades.
+* Added BeaconOfMercy allowing fast and safe travel for half an hour.
+* Commands for plugins are now only registered, if they are enabled.
+* Link does now have a message on success.
+* Displace now teleports correctly.
+* Unearthly shackles now take beds into account.
+* Fixed a bug, where path of midnight would randomly proc.
+* Introduced the DominionInformationCommand (dominionshowinfluence) which shows a dominions current influence value.
+ /dominionshowinfluence:
+  Shows a dominions current influence value.
+  aliases: [dsi]
+* The dominion map is now fully synchronized and uses ReentrantReadWriteLocks in fair mode for performance optimization.

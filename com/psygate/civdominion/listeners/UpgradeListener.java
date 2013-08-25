@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Spider;
 
 import static org.bukkit.entity.EntityType.*;
 
@@ -29,6 +31,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -38,6 +41,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -47,7 +51,10 @@ import org.bukkit.potion.PotionEffectType;
 import com.psygate.civdominion.CivDominion;
 import com.psygate.civdominion.configuration.Strings;
 import com.psygate.civdominion.types.Dominion;
+import com.psygate.civdominion.types.Vector3;
 import com.psygate.civdominion.upgrades.Upgrade;
+import com.psygate.math.euclidian.point.Point2D;
+import com.psygate.math.euclidian.polygon.Triangle2D;
 
 import static com.psygate.civdominion.upgrades.Upgrade.*;
 
@@ -65,7 +72,8 @@ public class UpgradeListener implements Listener {
 	private HashSet<Location> mineboost = new HashSet<Location>();
 	private Set<EntityType> fertility = new HashSet<EntityType>();
 	private HashSet<Location> spwn = new HashSet<Location>();
-	
+	private HashMap<String, Vector3<Long, AtomicInteger, Triangle2D>> mercy = new HashMap<String, Vector3<Long, AtomicInteger, Triangle2D>>();
+
 	private static final String[] strength = new String[] { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
 
 	public UpgradeListener() {
@@ -508,15 +516,16 @@ public class UpgradeListener implements Listener {
 			if (dom != null) {
 				if (!dom.hasUpgrade(PathOfMidnight) || !dom.hasMember(dmgr.getName()))
 					return;
-			}
-
-			long time = CivDominion.getInstance().getServer().getWorld(dmgr.getWorld().getName()).getTime();
-			if (time > 12300 && time < 23850) {
-				ev.setDamage(ev.getDamage() * 3);
-				if (pom.get(dmgr.getName()) == null
-						|| System.currentTimeMillis() - pom.get(dmgr.getName()) > TimeUnit.MINUTES.toMillis(7)) {
-					dmgr.sendMessage(Strings.pathofmidnight);
-					pom.put(dmgr.getName(), System.currentTimeMillis());
+				if (dom.getCoordinates().squareDistance2D(dmgr.getLocation()) <= dom.getRadius() * dom.getRadius()) {
+					long time = CivDominion.getInstance().getServer().getWorld(dmgr.getWorld().getName()).getTime();
+					if (time > 12300 && time < 23850) {
+						ev.setDamage(ev.getDamage() * 3);
+						if (pom.get(dmgr.getName()) == null
+								|| System.currentTimeMillis() - pom.get(dmgr.getName()) > TimeUnit.MINUTES.toMillis(7)) {
+							dmgr.sendMessage(Strings.pathofmidnight);
+							pom.put(dmgr.getName(), System.currentTimeMillis());
+						}
+					}
 				}
 			}
 		}
@@ -598,43 +607,46 @@ public class UpgradeListener implements Listener {
 		mineboost.remove(ev.getLocation());
 	}
 
-	@EventHandler
-	public void unearthlyShackles(PlayerRespawnEvent ev) {
-		if (!UnearthlyShackles.isEnabled())
-			return;
-		ArrayList<Dominion> doms = new ArrayList<Dominion>();
-
-		for (Dominion dom : CivDominion.getInstance().getMap().getDominionSet()) {
-			if (dom.hasUpgrade(UnearthlyShackles)) {
-				doms.add(dom);
-			}
-		}
-
-		if (doms.size() == 0)
-			return;
-		int ind;
-		double angle = 0;
-		synchronized (rand) {
-			ind = rand.nextInt(doms.size());
-			angle = Math.PI * 2 * rand.nextDouble();
-		}
-		Dominion here = doms.get(ind);
-
-		double x = (here.getCoordinates().getX() + Math.cos(angle) * 800 + 200);
-		double z = (here.getCoordinates().getY() + Math.sin(angle) * 800 + 200);
-		World world = CivDominion.getInstance().getServer().getWorld(here.getCoordinates().getWorld());
-		double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
-
-		ev.setRespawnLocation(new Location(world, x, y, z));
-		CivDominion.getInstance().getServer().broadcastMessage("RESPAWN!");
-		ev.getPlayer().sendMessage(Strings.shackles);
-	}
+	// @EventHandler
+	// public void unearthlyShackles(PlayerRespawnEvent ev) {
+	// if (!UnearthlyShackles.isEnabled())
+	// return;
+	// ArrayList<Dominion> doms = new ArrayList<Dominion>();
+	//
+	// for (Dominion dom : CivDominion.getInstance().getMap().getDominionSet())
+	// {
+	// if (dom.hasUpgrade(UnearthlyShackles)) {
+	// doms.add(dom);
+	// }
+	// }
+	//
+	// if (doms.size() == 0)
+	// return;
+	// int ind;
+	// double angle = 0;
+	// synchronized (rand) {
+	// ind = rand.nextInt(doms.size());
+	// angle = Math.PI * 2 * rand.nextDouble();
+	// }
+	// Dominion here = doms.get(ind);
+	//
+	// double x = (here.getCoordinates().getX() + Math.cos(angle) * 800 + 200);
+	// double z = (here.getCoordinates().getY() + Math.sin(angle) * 800 + 200);
+	// World world =
+	// CivDominion.getInstance().getServer().getWorld(here.getCoordinates().getWorld());
+	// double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
+	//
+	// ev.setRespawnLocation(new Location(world, x, y, z));
+	// CivDominion.getInstance().getServer().broadcastMessage("RESPAWN!");
+	// ev.getPlayer().sendMessage(Strings.shackles);
+	// }
 
 	@EventHandler
 	public void unearthlyShackles(PlayerLoginEvent ev) {
-		if (!UnearthlyShackles.isEnabled() || ev.getPlayer().hasPlayedBefore())
+		if (!UnearthlyShackles.isEnabled() || ev.getPlayer().hasPlayedBefore() || ev.getPlayer().getLastPlayed() != 0
+				|| ev.getPlayer().getBedSpawnLocation() != null)
 			return;
-		System.out.println(ev);
+
 		ArrayList<Dominion> doms = new ArrayList<Dominion>();
 
 		for (Dominion dom : CivDominion.getInstance().getMap().getDominionSet()) {
@@ -654,7 +666,7 @@ public class UpgradeListener implements Listener {
 		Dominion here = doms.get(ind);
 
 		double x = (here.getCoordinates().getX() + Math.cos(angle) * 800 + 200);
-		double z = (here.getCoordinates().getY() + Math.sin(angle) * 800 + 200);
+		double z = (here.getCoordinates().getZ() + Math.sin(angle) * 800 + 200);
 		World world = CivDominion.getInstance().getServer().getWorld(here.getCoordinates().getWorld());
 		double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
 
@@ -732,6 +744,87 @@ public class UpgradeListener implements Listener {
 		public void run() {
 			pl.teleport(loc, TeleportCause.PLUGIN);
 			pl.sendMessage(Strings.shackles);
+		}
+	}
+
+	public void addMercy(String name, Triangle2D vec2) {
+		Vector3<Long, AtomicInteger, Triangle2D> vec = new Vector3<Long, AtomicInteger, Triangle2D>(
+				System.currentTimeMillis(), new AtomicInteger(), vec2);
+		mercy.put(name, vec);
+	}
+	
+	private HashSet<Location> mercydrop = new HashSet<Location>();
+	
+	@EventHandler
+	public void mercyTarget(EntityTargetEvent ev) {
+		if(ev.isCancelled() || !Upgrade.BeaconOfMercy.isEnabled()) {
+			return;
+		}
+		if(ev.getTarget() instanceof Player) {
+			Object obj = null;
+			synchronized(mercy) {
+				obj = mercy.get(((Player)ev.getTarget()).getName());
+			}
+			
+			if(obj != null) {
+//				System.out.println("Butchering."+((Player)ev.getTarget()).getName()+" <- "+ev.getEntity());
+				if(ev.getEntity() instanceof LivingEntity && host.contains(ev.getEntityType())) {
+					LivingEntity en = (LivingEntity) ev.getEntity();
+					en.damage(100);
+					ev.setCancelled(true);
+					mercydrop.add(en.getLocation().getBlock().getLocation());
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void mercyDropRemove(ItemSpawnEvent ev) {
+		if(ev.isCancelled() || !Upgrade.BeaconOfMercy.isEnabled()) 
+			return;
+		
+		if(mercydrop.contains(ev.getLocation().getBlock().getLocation())) {
+			mercydrop.remove(ev.getLocation().getBlock().getLocation());
+			ev.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void mercyMove(PlayerMoveEvent ev) {
+		if (ev.isCancelled() || !Upgrade.BeaconOfMercy.isEnabled())
+			return;
+		Vector3<Long, AtomicInteger, Triangle2D> vec;
+		synchronized (mercy) {
+			vec = mercy.get(ev.getPlayer().getName());
+		}
+		if (vec == null)
+			return;
+		if (System.currentTimeMillis() - vec.getT() > TimeUnit.MINUTES.toMillis(30)) {
+			ev.getPlayer().sendMessage(Strings.nomoremercy);
+			synchronized (mercy) {
+				mercy.remove(ev.getPlayer().getName());
+			}
+		} else {
+			if (vec.getV().incrementAndGet() % 100 == 0) {
+				Point2D p = new Point2D(ev.getPlayer().getLocation().getX(), ev.getPlayer().getLocation().getZ());
+				//Player left mercy area
+				if(!vec.getW().contains(p)) {
+					ev.getPlayer().sendMessage(Strings.nomoremercy);
+					synchronized (mercy) {
+						mercy.remove(ev.getPlayer().getName());
+					}
+				}
+				Point2D inter = vec.getW().projectOnAB(p);
+				Location loc = new Location(ev.getPlayer().getWorld(), inter.getX(), ev.getPlayer().getLocation()
+						.getY(), inter.getY());
+				ev.getPlayer().sendBlockChange(loc, Material.REDSTONE_BLOCK, (byte) 0);
+
+				Point2D inter2 = vec.getW().projectOnAC(p);
+				Location loc2 = new Location(ev.getPlayer().getWorld(), inter2.getX(), ev.getPlayer().getLocation()
+						.getY(), inter2.getY());
+
+				ev.getPlayer().sendBlockChange(loc2, Material.LAPIS_BLOCK, (byte) 0);
+			}
 		}
 	}
 }

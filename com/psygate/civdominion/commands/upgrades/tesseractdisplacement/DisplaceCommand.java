@@ -13,10 +13,11 @@ import com.psygate.civdominion.commands.ACommand;
 import com.psygate.civdominion.commands.error.CommandException;
 import com.psygate.civdominion.configuration.Strings;
 import com.psygate.civdominion.types.Dominion;
+import com.psygate.civdominion.upgrades.Upgrade;
 
 public class DisplaceCommand extends ACommand {
 	private Random rand = new Random();
-	
+
 	public DisplaceCommand() {
 		super("displace");
 	}
@@ -35,18 +36,20 @@ public class DisplaceCommand extends ACommand {
 		} else if (dom != null && indom && dom.hasMember(caller.getName())) {
 			Dominion dom2 = CivDominion.getInstance().getMap().getDominionForName(args[0]);
 			if (dom2 != null) {
-				if(dom2.hasLink(dom.getName()) && dom.hasLink(dom2.getName())) {
-					fail = false;
-					double angle = 0;
-					synchronized (rand) {
-						angle = Math.PI * 2 * rand.nextDouble();
+				if (dom2.hasLink(dom.getName()) && dom.hasLink(dom2.getName())) {
+					if (dom.hasUpgrade(Upgrade.TesseractDisplacement) && dom2.hasUpgrade(Upgrade.TesseractDisplacement)) {
+						fail = false;
+						double angle = 0;
+						synchronized (rand) {
+							angle = Math.PI * 2 * rand.nextDouble();
+						}
+						double x = (dom2.getCoordinates().getX() + Math.cos(angle) * 800 + 200);
+						double z = (dom2.getCoordinates().getZ() + Math.sin(angle) * 800 + 200);
+						World world = CivDominion.getInstance().getServer().getWorld(dom2.getCoordinates().getWorld());
+						double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
+						caller.teleport(new Location(world, x, y, z));
+						caller.sendMessage(Strings.tesseracted);
 					}
-					double x = (dom2.getCoordinates().getX() + Math.cos(angle) * 800 + 200);
-					double z = (dom2.getCoordinates().getY() + Math.sin(angle) * 800 + 200);
-					World world = CivDominion.getInstance().getServer().getWorld(dom2.getCoordinates().getWorld());
-					double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
-					caller.teleport(new Location(world, x, y, z));
-					caller.sendMessage(Strings.tesseracted);
 				} else {
 					fail = false;
 					sender.sendMessage(Strings.spacewarp);

@@ -15,28 +15,28 @@ public enum Upgrade {
 	FullOfLife(12, false, 1000, WAR), DeathlyPerception(13, false, 1000, WAR), PathOfMidnight(14, false, 1000, WAR),
 	WitheringStrikes(15, false, 1000, WAR), PrayerOfIdols(15, false, 1000, ECONOMY), PrayerOfAsh(16, false, 1000, ECONOMY),
 	PrayerOfFertility(17, false, 1000, ECONOMY), UnearthlyShackles(18, false, 1000, ECONOMY),
-	TesseractDisplacement(19, false, 1000, ECONOMY);
+	TesseractDisplacement(19, false, 1000, ECONOMY), BeaconOfMercy(20, false, 1000, ECONOMY);
 	
 	// "Death into Life"
-	//psygate: if you have no bed, and you die, you will spawn within 500 blocks of your dominion, you are part of
+	// psygate: if you have no bed, and you die, you will spawn within 500 blocks of your dominion, you are part of
 
 	// "Potent Corruption" -> Gain a 10% chance to steal a potion effect from someone you're damaging
 	
 	// "Full of Life" -> gain a health regen 1 effect for 5 seconds on being hit
 	
-	//"Deathly Perception" -> On falling below 50% health, you do 150% damage for 3 seconds
+	// "Deathly Perception" -> On falling below 50% health, you do 150% damage for 3 seconds
 	
 	// "Path of Midnight" -> Do 200% damage while it's night vs mobs
 	
 	// "Withering Strikes" -> 10% chance on hit, that your foe does only do 60% damage for 3 secs
 	
-	//Mineboost -> Doubles unrare material drops.
+	// Mineboost -> Doubles unrare material drops.
 	
 	// Farmerboost -> Chance of wheat / carrots etc growing faster.
 	
-	//ShepherdBoost -> Chance of animals reproducing twice.
+	// ShepherdBoost -> Chance of animals reproducing twice.
 	
-	//Spawnmagnet -> Great chance of new people spawning near your dominion.
+	// Spawnmagnet -> Great chance of new people spawning near your dominion.
 	
 	private int id;
 	private Collection<Integer> req;
