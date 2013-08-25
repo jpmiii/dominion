@@ -130,6 +130,12 @@ Dominion stores its data upon reload / shutdown of the server. The data is writt
 
  alias: dns
 
+ * /dominionshowinfluence:
+
+ Shows a dominions current influence value.
+ 
+ aliases: [dsi]
+
 **Upgrade specific commands**:
 
  * /dominionxpinfo
@@ -240,3 +246,7 @@ Upgrades have currently 3 categories. Basic (can be developed anyways), Economy 
 * TesseractDisplacement:
 
  You can teleport with /displace between linked dominions with this upgrade.
+
+* BeaconOfMercy:
+
+ Allows fast and safe travel for half an hour. Mobs targetting you will instantly die, as long as you stay in the designated triangle, shown by Lapis and Redstoneblocks, placed besides you along the path, but not drop any loot.
